@@ -1,0 +1,4 @@
+/.env
+/.eslintrc.json
+/dist
+/node_modules
