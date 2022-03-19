@@ -31,9 +31,9 @@ function storeScore(score: Score) {
     stmt.run([score.userId, score.wordleId, score.score]);
     stmt.finalize();
 
-    db.each(`SELECT * FROM ${TABLE_NAME}`, function (_err, row) {
-      console.log({ row });
-    });
+    // db.each(`SELECT * FROM ${TABLE_NAME}`, function (_err, row) {
+    //   console.log({ row });
+    // });
   });
 }
 
