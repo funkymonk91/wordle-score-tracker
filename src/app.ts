@@ -29,7 +29,7 @@ const scoreReaction = (score: string): string => {
 client.on('ready', async () => {
   console.log(`${client?.user?.username} is online`);
   console.log(
-    `https://discord.com/api/oauth2/authorize?client_id=${process.env.APPID}&permissions=${process.env.permissions}&scope=bot%20applications.commands`
+    `https://discord.com/api/oauth2/authorize?client_id=${process.env.APP_ID}&permissions=${process.env.permissions}&scope=bot%20applications.commands`
   );
 });
 
