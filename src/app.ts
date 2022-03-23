@@ -1,11 +1,19 @@
 import 'dotenv/config';
-import { Client, Intents, TextChannel, User } from 'discord.js';
+import {
+  BaseCommandInteraction,
+  Client,
+  Intents,
+  Interaction,
+  TextChannel,
+  User,
+} from 'discord.js';
 import { Database, OPEN_READWRITE } from 'sqlite3';
+import { Commands } from './Commands';
 
 interface Score {
-  userId: User['id'];
+  user: User;
   wordleId: number;
-  score: number;
+  value: number;
 }
 
 const TABLE_NAME = 'scores';
@@ -18,22 +26,32 @@ function initDb() {
       score INTEGER NOT NULL,
       date_created DATETIME DEFAULT CURRENT_TIMESTAMP,
       PRIMARY KEY(userId, wordleId)
+    );
+    CREATE TABLE IF NOT EXISTS usernames(
+      userId INTEGER NOT NULL,
+      username TEXT NOT NULL,
+      PRIMARY KEY(userId)
     )`);
   console.log('Connected to database');
 }
 
 function storeScore(score: Score) {
   return db.serialize(() => {
-    const stmt = db.prepare(`
-    INSERT OR IGNORE INTO ${TABLE_NAME} (userId, wordleId, score) 
-    VALUES (?, ?, ?)
-  `);
-    stmt.run([score.userId, score.wordleId, score.score]);
-    stmt.finalize();
+    const scoreStmt = db.prepare(`
+      INSERT OR IGNORE INTO ${TABLE_NAME} (userId, wordleId, score) 
+      VALUES (?, ?, ?)
+    `);
 
-    // db.each(`SELECT * FROM ${TABLE_NAME}`, function (_err, row) {
-    //   console.log({ row });
-    // });
+    scoreStmt.run([score.user.id, score.wordleId, score.value]);
+    scoreStmt.finalize();
+
+    const userStmt = db.prepare(`
+      INSERT OR REPLACE INTO usernames (userId, username) 
+      VALUES (?, ?)
+    `);
+
+    userStmt.run([score.user.id, score.user.username.replace(/\'/g, "''")]);
+    userStmt.finalize();
   });
 }
 
@@ -51,19 +69,19 @@ const scoreReaction = (score: number): string => {
   if (score === 0) return '💩';
   if (score === 6) return '😅';
 
-  const icons = ['🧨', '🤘', '🤓', '🔥', '👏', '🎉'];
+  const icons = ['🧨', '🤘', '🤓', '🔥', '👏', '🎉', '🏆'];
 
   return icons[Math.floor(Math.random() * icons.length)];
 };
 
 client.on('ready', async () => {
-  console.log(`${client?.user?.username} is online`);
+  client!.user!.setActivity('Wordle', { type: 'PLAYING' });
+
+  await client!.application!.commands.set(Commands);
 
   initDb();
 
-  // console.log(
-  //   `https://discord.com/api/oauth2/authorize?client_id=${process.env.APP_ID}&permissions=${process.env.permissions}&scope=bot%20applications.commands`
-  // );
+  console.log(`${client!.user!.username} is online`);
 });
 
 client.on('messageCreate', async (message) => {
@@ -82,15 +100,36 @@ client.on('messageCreate', async (message) => {
     const tempScore = scoreLine.split(' ')[2].toLowerCase();
 
     const score: Score = {
-      userId: author.id,
+      user: author,
       wordleId: parseInt(scoreLine.split(' ')[1]),
-      score: tempScore === 'x' ? 0 : parseInt(tempScore),
+      value: tempScore === 'x' ? 0 : parseInt(tempScore),
     };
 
     storeScore(score);
 
-    message.react(scoreReaction(score.score));
+    message.react(scoreReaction(score.value));
   }
 });
+
+client.on('interactionCreate', async (interaction: Interaction) => {
+  if (interaction.isCommand() || interaction.isContextMenu()) {
+    await handleSlashCommand(client, interaction);
+  }
+});
+
+const handleSlashCommand = async (
+  client: Client,
+  interaction: BaseCommandInteraction
+): Promise<void> => {
+  const slashCommand = Commands.find((c) => c.name === interaction.commandName);
+  if (!slashCommand) {
+    interaction.followUp({ content: 'An error has occurred' });
+    return;
+  }
+
+  await interaction.deferReply();
+
+  slashCommand.run(client, interaction);
+};
 
 client.login(process.env.TOKEN);
