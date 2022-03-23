@@ -50,7 +50,7 @@ function storeScore(score: Score) {
       VALUES (?, ?)
     `);
 
-    userStmt.run([score.user.id, score.user.username.replace(/\'/g, "''")]);
+    userStmt.run([score.user.id, score.user.username]);
     userStmt.finalize();
   });
 }
