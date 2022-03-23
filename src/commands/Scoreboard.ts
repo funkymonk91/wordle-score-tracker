@@ -48,7 +48,5 @@ export const Scoreboard: Command = {
         });
       }
     );
-
-    db.close();
   },
 };
