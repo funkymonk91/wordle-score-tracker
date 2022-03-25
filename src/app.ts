@@ -66,10 +66,10 @@ const client = new Client({
 });
 
 const scoreReaction = (score: number): string => {
-  if (score === 0) return '💩';
-  if (score === 6) return '😅';
-
-  const icons = ['🧨', '🤘', '🤓', '🔥', '👏', '🎉', '🏆'];
+  let icons = ['🧨', '🤘', '🤓', '🔥', '👏', '🎉', '🏆', '🤯', '🤩'];
+  if (score === 0) icons = ['💩', '😔'];
+  if (score === 1) icons = ['🤨'];
+  if (score === 6) icons = ['😅', '🤔'];
 
   return icons[Math.floor(Math.random() * icons.length)];
 };
