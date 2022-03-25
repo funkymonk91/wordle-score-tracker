@@ -9,11 +9,9 @@ export const Scoreboard: Command = {
   description: 'Returns a scoreboard',
   type: 'CHAT_INPUT',
   run: async (client: Client, interaction: BaseCommandInteraction) => {
-    let content = 'Summed Scores from last 7 Wordles:```';
-
     db.serialize(() => {
       db.all(
-        `SELECT username, wordleId, SUM(
+        `SELECT username, MAX(wordleId) AS maxWordle, SUM(
             CASE score
               WHEN 1 THEN 6
               WHEN 2 THEN 5
@@ -34,6 +32,11 @@ export const Scoreboard: Command = {
           if (err) {
             console.error(err);
           }
+
+          let content = `Scoreboard for last 7 Wordles on record (${
+            rows[0].maxWordle - 7
+          } - ${rows[0].maxWordle}):`;
+          content += '```';
 
           rows.forEach((row, i) => {
             content += `\n| ${i + 1} | ${row.username} - ${row.sumScore}`;
