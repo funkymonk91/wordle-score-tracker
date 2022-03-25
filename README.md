@@ -1,7 +1,5 @@
 # wordle-score-tracker
 
-Validates and parses valid share output from https://www.nytimes.com/games/wordle/index.html.
+Parses Wordle's 'share' output. You know the one, with the square emojis. 
 
-TODO:
-- [ ] setup SQLite to store user_id, wordle_id and score
-- [ ] Weekly / Monthly rankings from there
+This bot reads those messages (only in `wordle` channels), parses them, stores the info in a sqlite database and then reacts based on your score. A simple scoreboard can be called with `/scoreboard`.
