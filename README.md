@@ -11,4 +11,8 @@ Wordle 279 4/6
 🟩🟩🟩🟩🟩
 ```
 
-This bot reads those messages (only in `wordle` channels), parses them, stores the info in a sqlite database and then reacts based on your score. A simple scoreboard can be called with `/scoreboard`.
+This bot reads those messages (only in `wordle` channels), parses them, stores the info in a sqlite database and then reacts based on your score.
+
+## Commands
+- `/scoreboard` - Simple algorithm gives points based on the # of guesses your wordle took. Scores points only for the last 7 Wordles.
+- `/history` - Shows the 30 most recent Wordle's the bot has logged for you
