@@ -1,8 +1,8 @@
 import { BaseCommandInteraction, Client } from 'discord.js';
 import { Command } from '../Command';
-import { Database, OPEN_READONLY } from 'sqlite3';
+import { Database, OPEN_READWRITE } from 'sqlite3';
 
-const db = new Database('./src/db.sqlite', OPEN_READONLY);
+const db = new Database('./src/db.sqlite', OPEN_READWRITE);
 
 export const Scoreboard: Command = {
   name: 'scoreboard',
@@ -28,7 +28,7 @@ export const Scoreboard: Command = {
         AND score > 0
       GROUP BY u.userId
       ORDER BY sumScore DESC`,
-        (err, rows) => {
+        (err, rows: Record<string, any>[]) => {
           if (err) {
             console.error(err);
           }

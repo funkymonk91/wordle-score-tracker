@@ -1,5 +1,5 @@
 import { Command } from './Command';
-import { Hello } from './commands/Hello';
 import { Scoreboard } from './commands/Scoreboard';
+import { History } from './commands/History';
 
-export const Commands: Command[] = [Scoreboard];
+export const Commands: Command[] = [Scoreboard, History];
