@@ -15,4 +15,4 @@ This bot reads those messages (only in `wordle` channels), parses them, stores t
 
 ## Commands
 - `/scoreboard` - Simple algorithm gives points based on the # of guesses your wordle took. Scores points only for the last 7 Wordles.
-- `/history` - Shows the 30 most recent Wordle's the bot has logged for you
+- `/history` - Shows the last 7 Wordles the bot has stored for you. 
