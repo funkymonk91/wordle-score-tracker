@@ -6,7 +6,7 @@ const db = new Database('./src/db.sqlite', OPEN_READWRITE);
 
 export const History: Command = {
   name: 'history',
-  description: 'Returns the last 30 Wordles you recorded with the point value.',
+  description: 'Returns the last 7 Wordles you recorded with the point value.',
   type: 'CHAT_INPUT',
   run: async (client: Client, interaction: BaseCommandInteraction) => {
     db.serialize(() => {
@@ -26,13 +26,13 @@ export const History: Command = {
         INNER JOIN usernames ON scores.userId = usernames.userId
         WHERE scores.userId = ${interaction.user.id}
         ORDER BY wordleId DESC
-        LIMIT 30`,
+        LIMIT 7`,
         (err, rows: Record<string, any>[]) => {
           if (err) {
             console.error(err);
           }
 
-          let content = `Here's what I got for you <@${rows[0].userId}>:`;
+          let content = `Here's what I got for you <@${interaction.user.id}>:\n`;
 
           content += '```';
           content += `| Wordle | Guesses | Points |`;

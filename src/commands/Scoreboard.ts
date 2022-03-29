@@ -35,7 +35,7 @@ export const Scoreboard: Command = {
 
           let content = `Scoreboard for last 7 Wordles on record (${
             rows[0].maxWordle - 7
-          } - ${rows[0].maxWordle}):`;
+          } - ${rows[0].maxWordle}):\n`;
           content += '```';
 
           rows.forEach((row, i) => {

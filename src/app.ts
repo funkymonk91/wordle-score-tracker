@@ -66,10 +66,12 @@ const client = new Client({
 });
 
 const scoreReaction = (score: number): string => {
-  let icons = ['🧨', '🤘', '🤓', '🔥', '👏', '🎉', '🏆', '🤯', '🤩'];
-  if (score === 0) icons = ['💩', '😔'];
+  let icons;
+
+  if (score === 0) icons = ['💩'];
   if (score === 1) icons = ['🤨'];
   if (score === 6) icons = ['😅', '🤔'];
+  else icons = ['🧨', '🤘', '🤓', '🔥', '👏', '🎉', '🏆', '🤯', '🤩'];
 
   return icons[Math.floor(Math.random() * icons.length)];
 };
@@ -97,12 +99,12 @@ client.on('messageCreate', async (message) => {
     (channel as TextChannel).name === 'wordle'
   ) {
     const scoreLine: string = content.split('\n')[0];
-    const tempScore = scoreLine.split(' ')[2].toLowerCase();
+    const tempScore = scoreLine.split(' ')[2].toUpperCase();
 
     const score: Score = {
       user: author,
       wordleId: parseInt(scoreLine.split(' ')[1]),
-      value: tempScore === 'x' ? 0 : parseInt(tempScore),
+      value: tempScore === 'X' ? 0 : parseInt(tempScore),
     };
 
     storeScore(score);
