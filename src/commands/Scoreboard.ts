@@ -19,13 +19,13 @@ export const Scoreboard: Command = {
               WHEN 4 THEN 3
               WHEN 5 THEN 2
               WHEN 6 THEN 1
+              WHEN 0 THEN 0
           END) AS sumScore
       FROM scores s 
       INNER JOIN usernames u 
         ON s.userId = u.userId
-      WHERE wordleId BETWEEN (SELECT MAX(wordleId) FROM scores) - 7 
-        AND (SELECT MAX(wordleId) FROM scores) 
-        AND score > 0
+      WHERE wordleId BETWEEN ((SELECT MAX(wordleId) FROM scores) - 7 )
+        AND (SELECT MAX(wordleId) FROM scores)
       GROUP BY u.userId
       ORDER BY sumScore DESC`,
         (err, rows: Record<string, any>[]) => {
@@ -33,9 +33,7 @@ export const Scoreboard: Command = {
             console.error(err);
           }
 
-          let content = `Scoreboard for last 7 Wordles on record (${
-            rows[0].maxWordle - 7
-          } - ${rows[0].maxWordle}):\n`;
+          let content = `Scoreboard for last 7 Wordles on record:\n`;
           content += '```';
 
           rows.forEach((row, i) => {
